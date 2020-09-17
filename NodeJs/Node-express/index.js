@@ -5,6 +5,10 @@ const express=require('express');
  const port=3000;
 
  const app=express();
+ const morgan=require('morgan');
+
+ app.use(morgan('dev'));
+ app.use(express.static(__dirname+'/public'));
 
  app.use((req,res,next)=>{
      console.log(req.headers);
