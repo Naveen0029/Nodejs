@@ -9,13 +9,20 @@ const express=require('express');
 
  const bodyParser=require('body-parser');
  const dishRouter=require('./routes/dishrouter');
+ const promoRouter=require('./routes/promorouter');
+ const leaderRouter=require('./routes/leaderrouter');
+
  app.use(bodyParser.json());
 
 
  app.use(morgan('dev'));
  app.use(express.static(__dirname+'/public'));
 
-app.use('/dishes',dishRouter);
+ app.use('/dishes/:dishId',dishRouter);
+app.use('/dishes/:dishId',dishRouter);
+app.use('/promotions',promoRouter);
+app.use('/leaders',leaderRouter);
+
  const server=http.createServer(app);
 
  server.listen(port,hostname,()=>{
