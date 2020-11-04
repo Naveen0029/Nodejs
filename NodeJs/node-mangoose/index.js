@@ -15,11 +15,26 @@ const connect= mongoose.connect(url);
     .then((dish)=>{
         console.log(dish);
 
-        return Dishes.find({}).exec();
+        return Dishes.findByIdAndUpdate(dish.id,{
+            $set:{description:'Updated test'}
+            },{
+                new:true
+        })
+        .exec();
     })
-    .then((dishes)=>{
-        console.log(dishes);
+    .then((dish)=>{
+        console.log(dish);
         
+        dish.comments.push({
+            rating:5,
+            comment:'I\m getting a sinking feeling!',
+            author: 'Leonardo di carpaccio'
+        });
+        return dish.save();
+    })
+    .then((dish) => {
+        console.log(dish);
+
         return Dishes.remove({});
     })
     .then(()=>{
@@ -28,5 +43,4 @@ const connect= mongoose.connect(url);
     .catch((err)=>{
          console.log(err);
     });
-       
-});
+});      
