@@ -4,6 +4,29 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+function auth(req,res,next){
+  console.log(req.headers);
+  var authHeader=req.headers.authorization;
+  if(!authHeader){
+    var err=new Error('You are not authenticated!');
+    res.setHeader('WWW-Authenticate','Basic');
+    err.status=401;
+    next(err);
+    return;
+  }
+  var auth=new Buffer.from(authHeader.split(' ')[1],'base64').toString().split(':');
+  var user=auth[0];
+  var pass=auth[1];
+  if(user=='admin'&&pass=='password'){
+    next();
+  }else{
+    var err=new Error('You are not authenticated');
+    res.setHeader('WWW-Authenticate','Basic');
+    err.status=401;
+    next(err);
+  }
+}
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var dishRouter = require('./routes/dishrouter');
@@ -11,16 +34,19 @@ var promoRouter = require('./routes/promorouter');
 var leaderRouter = require('./routes/leaderrouter');
 
 var app = express();
+app.use(auth);
 
 const mongoose = require('mongoose');
 
 const Dishes = require('./models/dishes');
+const promotions=require('./models/promotions');
+const leaders=require('./models/leaders');
 
 const url = 'mongodb://localhost:27017/conFusion';
 const connect = mongoose.connect(url);
 
 connect.then((db) => {
-    console.log("Connected correctly to server");
+    console.log('connected directly to the server');
 }, (err) => { console.log(err); });
 
 
